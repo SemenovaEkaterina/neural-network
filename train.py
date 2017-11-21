@@ -8,11 +8,7 @@ mnist = input_data.read_data_sets('MNIST_data', one_hot = True)
 
 
 tr_images, tr_labels = mnist.train.next_batch(60000)
-test_images, test_labels = mnist.train.next_batch(10000)
 
-
-for i in range(0, len(test_images)):
-    test_images[i] = np.array(test_images[i]) / 255
 
 for i in range(0, len(tr_images)):
     tr_images[i] = np.array(tr_images[i]) / 255
@@ -32,7 +28,6 @@ number = 2
 fig0 = plt.figure()
 
 im0 = plt.imshow(np.asmatrix(w[number].reshape(28, 28)), 'pink', animated=True)
-
 # plt.ion()
 
 for n in range(len(tr_images)):
@@ -59,58 +54,24 @@ for n in range(len(tr_images)):
     delta = error * ((resp >= 0) * np.ones(10))
     for i in range(0, 10):
 
-        w[i] -= np.dot(img, delta[i])*2
-        # if (np.dot(img, delta[i]) != 0).any():
-        #   print(i)
+        w[i] -= np.dot(img, delta[i])
         b[i] -= delta[i]
 
-    im0.set_array(np.asmatrix(w[number].reshape(28, 28)))
-    plt.pause(0.0000001)
-
-
-def nn_calculate(img):
-    resp = list(range(0, 10))
-    for i in range(0, 10):
-        r = w[i] * img
-        r = np.maximum(np.sum(r) + b[i], 0)  # relu
-        resp[i] = r
-
-    return np.argmax(resp)
-
-
-total = [0 for i in range(10)]
-valid = [0 for i in range(10)]
-invalid = []
-
-
-def index_of_first(lst):
-    for i,v in enumerate(lst):
-        if v == 1:
-            return i
-    return None
-
-for i in range(0, len(test_images)):
-
-    img = test_images[i]
-    predicted = nn_calculate(img)
-    true = test_labels[i]
-
-    predicted_array = np.zeros(10, dtype=np.float32)
-    predicted_array[predicted] = 1.0
-
-    index = index_of_first(true)
-    if (predicted_array == true).all():
-        valid[index] = valid[index] + 1
-    else:
-        invalid.append({"image": img, "predicted": predicted, "true": true})
-    total[index] = total[index] + 1
+    # im0.set_array(np.asmatrix(w[number].reshape(28, 28)))
+    # plt.pause(0.0000001)
 
 
 for i in range(10):
+    filename = 'train/{}'.format(i)
+    if not os.path.exists(os.path.dirname(filename)):
+        os.makedirs(os.path.dirname(filename))
+    np.savetxt(filename, w[i])
     im0.set_array(np.asmatrix(w[i].reshape(28, 28)))
     filename = 'report/imgs/{}.png'.format(i)
     if not os.path.exists(os.path.dirname(filename)):
-        os.makedirs(os.path.dirname(filename))
+       os.makedirs(os.path.dirname(filename))
     plt.savefig(filename)
-    print("accuracy {} = {}".format(i, valid[i] / total[i]))
-    print("total {} = {}".format(i, total[i]))
+
+
+filename = 'train/b'
+np.savetxt(filename, b)
