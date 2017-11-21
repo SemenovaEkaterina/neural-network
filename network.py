@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -6,7 +7,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('MNIST_data', one_hot = True)
 
 
-tr_images, tr_labels = mnist.train.next_batch(50000)
+tr_images, tr_labels = mnist.train.next_batch(60000)
 test_images, test_labels = mnist.train.next_batch(10000)
 
 
@@ -26,7 +27,7 @@ def relu(x):
 w = (2 * np.random.rand(10, 784) - 1) / 10
 b = (2 * np.random.rand(10) - 1) / 10
 
-number = 0
+number = 2
 
 fig0 = plt.figure()
 
@@ -63,8 +64,8 @@ for n in range(len(tr_images)):
         #   print(i)
         b[i] -= delta[i]
 
-    # im0.set_array(np.asmatrix(w[number].reshape(28, 28)))
-    # plt.pause(0.0000001)
+    im0.set_array(np.asmatrix(w[number].reshape(28, 28)))
+    plt.pause(0.0000001)
 
 
 def nn_calculate(img):
@@ -81,6 +82,7 @@ total = [0 for i in range(10)]
 valid = [0 for i in range(10)]
 invalid = []
 
+
 def index_of_first(lst):
     for i,v in enumerate(lst):
         if v == 1:
@@ -96,7 +98,6 @@ for i in range(0, len(test_images)):
     predicted_array = np.zeros(10, dtype=np.float32)
     predicted_array[predicted] = 1.0
 
-
     index = index_of_first(true)
     if (predicted_array == true).all():
         valid[index] = valid[index] + 1
@@ -107,6 +108,9 @@ for i in range(0, len(test_images)):
 
 for i in range(10):
     im0.set_array(np.asmatrix(w[i].reshape(28, 28)))
-    plt.savefig('{}.png'.format(i))
+    filename = 'report/imgs/{}.png'.format(i)
+    if not os.path.exists(os.path.dirname(filename)):
+        os.makedirs(os.path.dirname(filename))
+    plt.savefig(filename)
     print("accuracy {} = {}".format(i, valid[i] / total[i]))
     print("total {} = {}".format(i, total[i]))
