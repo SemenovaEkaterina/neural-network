@@ -15,14 +15,12 @@ with doc.head:
     link(rel='stylesheet', href='../style.css')
 
 with doc:
-    h1('Report',cls='page-header')
-
     with div(id='header'):
         with div(cls='row'):
             for i in range(10):
                 with div(cls='col-md-3'):
-                    with div(cls='panel panel-{}'.format('success' if (float(stat[i][0]) > 0.8) else 'danger')):
-                        div('Header', cls='panel-heading')
+                    with div(cls='panel panel-{}'.format('success' if (float(stat[i][0]) > 0.65) else 'danger')):
+                        div('', cls='panel-heading')
                         with div(cls='panel-body'):
                             with div(cls='col-md-7'):
                                 img('', src='imgs/%s.png' % i, width='200px', height='170px')
